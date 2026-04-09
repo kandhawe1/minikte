@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
+from fastapi import Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from pydantic import BaseModel
@@ -25,9 +26,9 @@ class LoginRequest(BaseModel):
 
 @routerlogin.post("/login")
 @limiter.limit("5/minute")
-async def login(request: LoginRequest):
+async def login(request: Request, body: LoginRequest):
     # Switch control
-    match request.broker:
+    match body.broker:
 
         case "zerodha":
             broker = ZerodhaAdapter()
@@ -48,7 +49,7 @@ async def login(request: LoginRequest):
             return {"error": "Unsupported broker"}
 
     #broker = ZerodhaAdapter()
-    accesscode = f"{request.code}_{request.broker}"
+    accesscode = f"{body.code}_{body.broker}"
 
     # Create execution engine
     engine = ExecutionEngine(broker)
@@ -60,5 +61,5 @@ async def login(request: LoginRequest):
     SessionManager.create_session(accesscode, engine)
 
     return {
-        "message": f"{request.code} logged in successfully"
+        "message": f"{body.code} logged in successfully"
     }

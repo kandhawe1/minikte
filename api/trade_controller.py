@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
+from fastapi import Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from models.trade_models import TradeRequest
@@ -12,18 +13,20 @@ limiter = Limiter(key_func=get_remote_address)
 
 @routertrade.post("/execute")
 @limiter.limit("100/minute")
-async def execute_trade(request: TradeRequest):
+async def execute_trade(request: Request, body: TradeRequest):
 
     # Get execution engine for this user
-    engine = SessionManager.get_engine(request.code)
+    accesscode = f"{body.code}_{body.broker}"
+
+    engine = SessionManager.get_engine(accesscode)
 
     if not engine:
         return {
-            "error": f"User {request.code} is not logged in. Please call /login first."
+            "error": f"User {body.code} is not logged in with broker {body.broker}. Please call /login first."
         }
 
     # Execute portfolio trades
-    results = await engine.execute_portfolio(request.orders)
+    results = await engine.execute_portfolio(body.orders)
 
     # Send notification
     notifier = Notifier()
