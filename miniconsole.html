@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MiniTrade Execution Console</title>
+
+<style>
+body{
+    font-family: Arial;
+    margin:40px;
+}
+
+h2{
+    color:#2c3e50;
+}
+
+input,select{
+    padding:8px;
+    margin:5px;
+    width:200px;
+}
+
+button{
+    padding:10px 20px;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+textarea{
+    width:600px;
+    height:150px;
+}
+
+.result{
+    margin-top:20px;
+    padding:10px;
+    background:#f4f4f4;
+}
+
+table{
+    border-collapse:collapse;
+    width:600px;
+    margin-top:10px;
+}
+
+th,td{
+    border:1px solid #ccc;
+    padding:10px;
+    text-align:center;
+}
+
+th{
+    background:#f4f4f4;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>MiniTrade Execution Console</h1>
+
+<!-- LOGIN SECTION -->
+
+<h2>Login</h2>
+
+<input id="code" placeholder="User Code" value="apple">
+<input id="broker" placeholder="Broker" value="zerodha">
+<input id="connection" placeholder="Connection Key" value="abcdef">
+
+<br>
+
+<button onclick="login()">Login</button>
+
+<hr>
+
+<!-- TRADE SECTION -->
+
+<h2>Execute Trade</h2>
+
+<textarea id="orders">
+[
+ {"symbol":"RELIANCE","quantity":1,"action":"BUY"},
+ {"symbol":"INFY","quantity":1,"action":"BUY"}
+]
+</textarea>
+
+<br>
+
+<button onclick="executeTrade()">Execute Order</button>
+
+<hr>
+
+<!-- ORDERBOOK SECTION -->
+
+<h2>Internal Holdings (OrderBook)</h2>
+
+<button onclick="loadHoldings()">Load Holdings</button>
+
+<table id="holdingsTable">
+
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Quantity</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+<hr>
+
+<h2>Response</h2>
+
+<pre id="response" class="result"></pre>
+
+<script>
+
+const API="http://localhost:8000"
+
+
+async function login(){
+
+const body={
+    code:document.getElementById("code").value,
+    broker:document.getElementById("broker").value,
+    connection_key:document.getElementById("connection").value
+}
+
+const res=await fetch(API+"/login",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify(body)
+})
+
+const data=await res.json()
+
+document.getElementById("response").innerText=
+JSON.stringify(data,null,2)
+
+}
+
+
+
+async function executeTrade(){
+
+const body={
+    code:document.getElementById("code").value,
+    broker:document.getElementById("broker").value,
+    orders:JSON.parse(document.getElementById("orders").value)
+}
+
+const res=await fetch(API+"/execute",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify(body)
+})
+
+const data=await res.json()
+
+document.getElementById("response").innerText=
+JSON.stringify(data,null,2)
+
+loadHoldings()
+
+}
+
+
+
+async function loadHoldings(){
+
+const body={
+    code:document.getElementById("code").value,
+    broker:document.getElementById("broker").value
+}
+
+const res=await fetch(API+"/holdings",{
+    method:"POST",
+    headers:{
+        "Content-Type":"application/json"
+    },
+    body:JSON.stringify(body)
+})
+
+const data=await res.json()
+
+const table=document.querySelector("#holdingsTable tbody")
+
+table.innerHTML=""
+
+if(!data.holdings){
+    return
+}
+
+for(const symbol in data.holdings){
+
+const row=document.createElement("tr")
+
+row.innerHTML=`
+<td>${symbol}</td>
+<td>${data.holdings[symbol]}</td>
+`
+
+table.appendChild(row)
+
+}
+
+}
+
+
+// Auto refresh holdings every 5 seconds
+setInterval(loadHoldings,5000)
+
+</script>
+
+</body>
+</html>

@@ -23,13 +23,16 @@ Scenerio Handled <br/>
 RateLimiter
 - Only 5 login requests per minute per IP
 - Max 100 trade calls per minute
-- #For clientcode limiter = Limiter(key_func=lambda request: request.headers.get("X-User-Code"))
+- For clientcode limiter = Limiter(key_func=lambda request: request.headers.get("X-User-Code"))
 
 ##Third-party open-source trading libraries used.
 slowapi - For RateLimiting
 
 
 ##
+miniconsole.html: has been added for frontend <br/>
+
+
 <b>Supported Brokers</b>:- <br/>
 Zerodha = "zerodha"<br/>
 Fyers	= "fyers"<br/>
