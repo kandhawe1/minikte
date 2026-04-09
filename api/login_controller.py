@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from pydantic import BaseModel
 from brokers.zerodha_adapter import ZerodhaAdapter
 from brokers.fyers_adapter import FyersAdapter
@@ -12,6 +14,8 @@ from core.session_manager import SessionManager
 
 routerlogin = APIRouter()
 
+limiter = Limiter(key_func=get_remote_address)
+# limiter = Limiter(key_func=lambda request: request.headers.get("X-User-Code"))
 
 class LoginRequest(BaseModel):
     code: str
@@ -20,6 +24,7 @@ class LoginRequest(BaseModel):
 
 
 @routerlogin.post("/login")
+@limiter.limit("5/minute")
 async def login(request: LoginRequest):
     # Switch control
     match request.broker:
