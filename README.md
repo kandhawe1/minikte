@@ -18,3 +18,31 @@ Created separate adapters file to easily handle the specific area
 slowapi - For RateLimiting
 
 
+##
+Supported Brokers:- <br/>
+Zerodha = "zerodha"<br/>
+Fyers	= "fyers"<br/>
+Angelone= "angelone"<br/>
+Groww	= "groww"<br/>
+Upstox	= "upstox"<br/>
+
+
+
+/login
+
+{
+  "code": "apple",
+  "broker": "zerodha",
+  "connection_key": "abcdef"
+}
+
+
+/execute ( Trade )
+{
+  "code": "apple",
+  "broker": "zerodha",
+  "orders": [
+    {"symbol": "RELIANCE", "quantity": 1, "action": "BUY"},
+    {"symbol": "INFY", "quantity": 1, "action": "BUY"}
+  ]
+}
