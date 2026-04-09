@@ -1,6 +1,7 @@
 # minikte - TradeExecutionEngine
 
 ##Setup and run instructions
+
 docker build -t minikte
 
 docker images - to check image has been created successfully ( minikte )
