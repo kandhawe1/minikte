@@ -4,11 +4,11 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from pydantic import BaseModel
 from brokers.zerodha_adapter import ZerodhaAdapter
-from brokers.fyers_adapter import FyersAdapter
 from brokers.angelone_adapter import AngeloneAdapter
 from brokers.groww_adapter import GrowwAdapter
 from brokers.upstox_adapter import UpstoxAdapter
 from brokers.fyers_adapter import FyersAdapter
+from core.config_loader import load_credentials
 
 from core.execution_engine import ExecutionEngine
 from core.session_manager import SessionManager
@@ -48,8 +48,19 @@ async def login(request: Request, body: LoginRequest):
         case _:
             return {"error": "Unsupported broker"}
 
-    #broker = ZerodhaAdapter()
+        # broker = ZerodhaAdapter()
     accesscode = f"{body.code}_{body.broker}"
+
+        # Load credentials
+    credentials = load_credentials(accesscode)
+
+    if not credentials:
+        return {"error": "Credentials not found"}
+
+        # Authenticate broker
+    await broker.authenticate(credentials)
+
+
 
     # Create execution engine
     engine = ExecutionEngine(broker)

@@ -9,5 +9,5 @@ class Notifier:
             print(
                 f"Symbol: {r['symbol']} "
                 f"Status: {r['status']} "
-                f"Message: {r['message']}"
+                f"Message: {r.get('message') or r.get('error') or 'N/A'}"
             )

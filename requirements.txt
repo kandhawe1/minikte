@@ -1,5 +1,24 @@
+# Web framework
 fastapi
 uvicorn
+
+# Validation
 pydantic
+
+# HTTP clients
 httpx
+requests
+
+# Rate limiting (you already use slowapi middleware)
 slowapi
+
+# Angel One SmartAPI SDK
+SmartApi
+
+# Authentication (TOTP for Angel login)
+pyotp
+
+# Utilities (commonly needed in your codebase)
+pandas
+python-dateutil
+logzero

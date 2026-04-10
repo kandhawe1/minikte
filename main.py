@@ -9,6 +9,7 @@ from slowapi import _rate_limit_exceeded_handler
 from api.trade_controller import routertrade
 from api.login_controller import routerlogin
 from api.portfolio_controller import routerportfolio
+from api.postback_controller import routerpostback
 
 import uvicorn
 
@@ -40,6 +41,8 @@ def home():
 app.include_router(routertrade)
 app.include_router(routerlogin)
 app.include_router(routerportfolio)
+app.include_router(routerpostback)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)

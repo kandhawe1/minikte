@@ -1,5 +1,8 @@
 import asyncio
+
+
 from core.order_manager import OrderManager
+
 
 
 class ExecutionEngine:
@@ -7,6 +10,8 @@ class ExecutionEngine:
     def __init__(self, broker):
         self.broker = broker
         self.holdings = {}   # internal holdings store
+
+
         self.order_manager = OrderManager(broker)
 
     async def load_holdings(self):
